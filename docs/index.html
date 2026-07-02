@@ -26,6 +26,8 @@
 </head>
 <body>
 
+<div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgressBar"></div></div>
+
 <nav class="navbar">
   <div class="nav-inner">
     <span class="nav-logo">NSE·BSE Screener</span>
@@ -39,73 +41,77 @@
 </nav>
 
 <header class="hero">
-  <div class="hero-bg-glow"></div>
-  <div class="hero-content reveal">
-    <p class="eyebrow">A self-built market intelligence system</p>
-    <h1>Cut through market noise.<br/>Find the signal.</h1>
-    <p class="hero-sub">
+  <div class="hero-bg-glow" id="heroGlow"></div>
+  <div class="hero-content" id="heroContent">
+    <p class="eyebrow reveal">A self-built market intelligence system</p>
+    <h1 class="reveal" style="transition-delay:.08s">Cut through market noise.<br/>Find the signal.</h1>
+    <p class="hero-sub reveal" style="transition-delay:.16s">
       Live NSE &amp; BSE technical screening, news sentiment, backtested rules, and risk-managed
       position sizing — synthesized into one dashboard, refreshed on demand.
     </p>
-    <div class="hero-ctas">
+    <div class="hero-ctas reveal" style="transition-delay:.24s">
       <a href="#cta" class="btn btn-primary">View the project</a>
       <a href="#problem" class="btn btn-ghost">See how it works ↓</a>
     </div>
   </div>
+  <div class="scroll-hint reveal" style="transition-delay:.4s">
+    <span>Scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
 </header>
 
-<section id="problem" class="section video-section">
+<section id="problem" class="section section-heading">
   <div class="section-label reveal">01 — The Problem</div>
   <h2 class="reveal">Thousands of tickers.<br/>One overwhelming wall of noise.</h2>
   <p class="section-copy reveal">
     Every candle, every ticker, every red-and-green number is screaming for attention at once.
     Most retail traders either freeze, or chase whatever is loudest — not what's actually strongest.
+    Scroll to watch it resolve.
   </p>
-  <div class="video-frame reveal">
-    <video
-      class="section-video"
-      poster="assets/generated/section2-start-chaos-1280x720.png"
-      muted
-      loop
-      playsinline
-      preload="metadata"
-    >
-      <source src="assets/video/section2-chaos-to-clean-web.mp4" type="video/mp4" />
-    </video>
-    <div class="video-caption">Raw market noise, distilled down to a single clean read.</div>
-  </div>
 </section>
+
+<div class="scrub-pin"
+     data-frames-dir="assets/frames/problem"
+     data-frame-count="71"
+     data-frame-pad="3">
+  <div class="scrub-sticky">
+    <canvas class="scrub-canvas"></canvas>
+    <div class="scrub-vignette"></div>
+    <div class="scrub-caption">Raw market noise, distilled down to a single clean read.</div>
+    <div class="scrub-progress-track"><div class="scrub-progress-fill"></div></div>
+  </div>
+</div>
 
 <section id="how-it-works" class="section">
   <div class="section-label reveal">02 — How It Works</div>
   <h2 class="reveal">One dashboard. Five layers of filtering.</h2>
   <div class="card-grid">
-    <div class="card reveal">
+    <div class="card reveal-card">
       <div class="card-icon">◈</div>
       <h3>Technical Screener</h3>
       <p>Full-market NSE + BSE scan using RSI, EMA crossovers, relative volume, and price action — pulled live, not curated.</p>
     </div>
-    <div class="card reveal">
+    <div class="card reveal-card">
       <div class="card-icon">⟡</div>
       <h3>News &amp; Sentiment</h3>
       <p>Live headline scraping per symbol with heuristic positive/negative/neutral tagging, plus official NSE corporate announcements.</p>
     </div>
-    <div class="card reveal">
+    <div class="card reveal-card">
       <div class="card-icon">◇</div>
       <h3>Multi-Timeframe Confirm</h3>
       <p>Cross-checks daily signals against weekly and 4-hour structure before a setup counts as confirmed.</p>
     </div>
-    <div class="card reveal">
+    <div class="card reveal-card">
       <div class="card-icon">▦</div>
       <h3>ATR-Based Backtesting</h3>
       <p>Every rule is simulated bar-by-bar with real stop-loss and 2:1 target exits — not a fixed holding period fiction.</p>
     </div>
-    <div class="card reveal">
+    <div class="card reveal-card">
       <div class="card-icon">⌗</div>
       <h3>Position Sizing &amp; Kite Tickets</h3>
       <p>Enforces a fixed risk budget per trade and generates ready-to-place Zerodha Kite order tickets — never places orders itself.</p>
     </div>
-    <div class="card reveal">
+    <div class="card reveal-card">
       <div class="card-icon">◉</div>
       <h3>Market Context</h3>
       <p>India VIX and live FII/DII flow data contextualize every signal against the broader market regime.</p>
@@ -113,7 +119,7 @@
   </div>
 </section>
 
-<section id="evidence" class="section evidence-section">
+<section id="evidence" class="section section-heading">
   <div class="section-label reveal">03 — The Evidence</div>
   <h2 class="reveal">Confidence is cheap.<br/>Backtested honesty isn't.</h2>
   <p class="section-copy reveal">
@@ -123,32 +129,31 @@
   </p>
   <div class="stat-row reveal">
     <div class="stat">
-      <span class="stat-value">2:1</span>
+      <span class="stat-value" data-count="2:1">0:0</span>
       <span class="stat-label">Minimum reward:risk enforced on every simulated exit</span>
     </div>
     <div class="stat">
-      <span class="stat-value">ATR</span>
+      <span class="stat-value" data-scramble="ATR">ATR</span>
       <span class="stat-label">Dynamic stop-loss sizing, not arbitrary fixed percentages</span>
     </div>
     <div class="stat">
-      <span class="stat-value">1%</span>
+      <span class="stat-value" data-count="1%">0%</span>
       <span class="stat-label">Max capital risked per trade, regardless of conviction</span>
     </div>
   </div>
-  <div class="video-frame reveal">
-    <video
-      class="section-video"
-      poster="assets/generated/evidence-start-confident-1280x720.png"
-      muted
-      loop
-      playsinline
-      preload="metadata"
-    >
-      <source src="assets/video/section3-evidence-web.mp4" type="video/mp4" />
-    </video>
-    <div class="video-caption">A confident-looking trend, wrapped in the analysis that decides if it's trustworthy.</div>
-  </div>
 </section>
+
+<div class="scrub-pin"
+     data-frames-dir="assets/frames/evidence"
+     data-frame-count="71"
+     data-frame-pad="3">
+  <div class="scrub-sticky">
+    <canvas class="scrub-canvas"></canvas>
+    <div class="scrub-vignette"></div>
+    <div class="scrub-caption">A confident-looking trend, wrapped in the analysis that decides if it's trustworthy.</div>
+    <div class="scrub-progress-track"><div class="scrub-progress-fill"></div></div>
+  </div>
+</div>
 
 <section id="cta" class="section cta-section">
   <div class="reveal">
