@@ -1,0 +1,29 @@
+{
+  "scope": "all_indian_equities",
+  "exchanges": ["NSE", "BSE"],
+  "symbol_format": "EXCHANGE:SYMBOL (e.g. NSE:RELIANCE, BSE:RELIANCE, NSE:TCS)",
+  "watchlist": "open — no fixed list. User may name any NSE/BSE equity; agent may search via symbol_search and analyse any valid ticker.",
+  "default_market": "india",
+  "timeframes_to_check": ["1W", "1D", "4H", "1H"],
+  "bias_criteria": {
+    "bullish": "Price above 50-day EMA on daily, RSI between 45 and 70, higher highs and higher lows on 4H, volume rising on up days",
+    "bearish": "Price below 50-day EMA on daily, RSI below 45, lower highs and lower lows on 4H",
+    "neutral": "Price chopping around 50-day EMA, RSI 40-60, no clear structure — wait"
+  },
+  "risk_rules": {
+    "max_risk_per_trade": "1% of portfolio",
+    "portfolio_size_inr": 20000,
+    "min_rr_ratio": 2,
+    "no_trades_during": [
+      "earnings release day unless user confirms",
+      "first 15 minutes after market open",
+      "Budget day / RBI policy day for index-heavy setups"
+    ]
+  },
+  "indicators_i_care_about": ["RSI (14)", "MACD (12, 26, 9)", "50 EMA", "200 EMA", "Volume"],
+  "agent_permissions": {
+    "tradingview": "full — switch any NSE/BSE symbol, change timeframe, add/remove indicators, draw on chart, set alerts, screenshots, Pine Script, replay simulation, batch scans",
+    "zerodha_kite": "none — do NOT place real broker orders unless user explicitly connects Kite Connect API later. Output Kite-ready order tickets for user to click buy/sell manually."
+  },
+  "analysis_style": "User names a stock or asks for a scan. Use symbol_search for unknown tickers. Prefer large/mid caps for suggestions unless user specifies small cap."
+}

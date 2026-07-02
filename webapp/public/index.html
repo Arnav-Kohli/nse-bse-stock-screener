@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NSE/BSE Stock Screener</title>
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>NSE/BSE Screener</h1>
+        <span class="tagline">Live technical scan + news + official filings + backtested evidence — free, no login</span>
+      </div>
+      <div class="topbar-meta">
+        <span id="lastUpdated" class="muted">Not run yet</span>
+      </div>
+    </header>
+
+    <div id="marketContext" class="market-context muted">Loading market context…</div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="screener">Screener</button>
+      <button class="tab-btn" data-tab="shortlist">My Shortlist &amp; Performance</button>
+      <button class="tab-btn" data-tab="backtest">Backtest</button>
+    </nav>
+
+    <section id="tab-screener" class="tab-panel">
+      <section class="controls">
+        <div class="control-group">
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="bullish" selected>Bullish (trend + momentum)</option>
+            <option value="bearish">Bearish (weak/avoid)</option>
+            <option value="gainers">Top gainers (raw)</option>
+            <option value="losers">Top losers (raw)</option>
+            <option value="active">Most active (volume)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>Exchange</label>
+          <div class="checkbox-row">
+            <label class="checkbox"><input type="checkbox" value="NSE" checked /> NSE</label>
+            <label class="checkbox"><input type="checkbox" value="BSE" checked /> BSE</label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="minMarketCap">Min market cap</label>
+          <select id="minMarketCap">
+            <option value="0">Any</option>
+            <option value="5000000000" selected>₹500cr (large+mid)</option>
+            <option value="20000000000">₹2,000cr (large cap)</option>
+            <option value="50000000000">₹5,000cr</option>
+            <option value="100000000000">₹10,000cr</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="limit">Results per exchange</label>
+          <input type="number" id="limit" value="20" min="1" max="100" />
+        </div>
+
+        <div class="control-group control-action">
+          <button id="runScan" class="btn btn-primary">Run scan</button>
+        </div>
+      </section>
+
+      <div class="results-pane full-width">
+        <div class="pane-header">
+          <h2 id="resultsTitle">Results</h2>
+          <div class="pane-header-actions">
+            <span id="resultsSummary" class="muted"></span>
+            <button id="backtestVisible" class="btn btn-ghost small-btn">Backtest this list</button>
+          </div>
+        </div>
+        <div id="resultsError" class="error hidden"></div>
+        <div id="resultsLoading" class="loading hidden">Scanning the market…</div>
+        <table class="results-table" id="resultsTable">
+          <thead>
+            <tr>
+              <th></th>
+              <th data-sort="name">Symbol</th>
+              <th data-sort="sector">Sector</th>
+              <th class="num" data-sort="close">Close (₹)</th>
+              <th class="num" data-sort="change">Chg %</th>
+              <th class="num" data-sort="RSI">RSI</th>
+              <th class="num" data-sort="EMA50">EMA50</th>
+              <th class="num" data-sort="relative_volume_10d_calc">Rel. Vol</th>
+              <th class="num" data-sort="price_earnings_ttm">P/E</th>
+              <th class="num" data-sort="return_on_equity_fq">ROE %</th>
+              <th>Confirm</th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+        <p id="resultsEmpty" class="muted hidden">No matches yet — run a scan above.</p>
+      </div>
+    </section>
+
+    <section id="tab-shortlist" class="tab-panel hidden">
+      <div class="pane-header">
+        <h2>My shortlist &amp; performance</h2>
+        <div class="pane-header-actions">
+          <span id="shortlistCount" class="muted">0 stocks</span>
+          <button id="refreshPerformance" class="btn btn-ghost small-btn">Refresh performance</button>
+          <button id="exportCsv" class="btn btn-ghost small-btn">Export CSV</button>
+        </div>
+      </div>
+      <p class="muted small">Star a stock in the Screener tab to save it here. Saved on this machine (server-side), so performance can be tracked over time.</p>
+      <table class="results-table" id="shortlistTable">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th class="num">Price at add (₹)</th>
+            <th class="num">Current price (₹)</th>
+            <th class="num">Return %</th>
+            <th class="num">Days held</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="shortlistBody"></tbody>
+      </table>
+      <p id="shortlistEmpty" class="muted">No stocks shortlisted yet.</p>
+    </section>
+
+    <section id="tab-backtest" class="tab-panel hidden">
+      <div class="pane-header">
+        <h2>Backtest the bullish/bearish rule</h2>
+      </div>
+      <p class="muted small">
+        Tests the screener's rule (close &gt; EMA50, RSI 45–70, rising volume = bullish) against real historical
+        prices from Yahoo Finance. Each signal simulates an actual ATR-based stop-loss and 2:1 reward:risk target
+        exit — not just "price N days later" — so the result reflects what a disciplined trader following the
+        stop-loss rule would have actually experienced.
+      </p>
+      <div class="controls inline-controls">
+        <div class="control-group">
+          <label for="btSymbols">Symbols (comma-separated)</label>
+          <input type="text" id="btSymbols" placeholder="RELIANCE,TCS,HDFCBANK" style="min-width:320px" />
+        </div>
+        <div class="control-group">
+          <label for="btRange">History window</label>
+          <select id="btRange">
+            <option value="1y">1 year</option>
+            <option value="2y" selected>2 years</option>
+            <option value="5y">5 years</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="btHold">Hold period (trading days)</label>
+          <input type="number" id="btHold" value="10" min="1" max="60" />
+        </div>
+        <div class="control-group control-action">
+          <button id="runBacktest" class="btn btn-primary">Run backtest</button>
+        </div>
+      </div>
+      <div id="backtestLoading" class="loading hidden">Downloading historical data and simulating…</div>
+      <div id="backtestError" class="error hidden"></div>
+      <div id="backtestSummary" class="stat-row hidden"></div>
+      <table class="results-table hidden" id="backtestTable">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th class="num">Bullish signals</th>
+            <th class="num">Win rate</th>
+            <th class="num">Avg return</th>
+            <th class="num">Hit target</th>
+            <th class="num">Hit stop</th>
+            <th class="num">Timed out</th>
+            <th class="num">Buy &amp; hold (period)</th>
+          </tr>
+        </thead>
+        <tbody id="backtestBody"></tbody>
+      </table>
+    </section>
+
+    <footer class="disclaimer">
+      Not financial advice. Technical, news, and backtest signals can't predict future returns — this is a research aid, not a guarantee.
+      Follow your own risk rules before acting on anything shown here.
+    </footer>
+  </div>
+
+  <div id="newsDrawer" class="drawer hidden">
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <h3 id="drawerTitle">News</h3>
+        <button id="drawerClose" class="btn btn-ghost">Close</button>
+      </div>
+      <div class="drawer-tabs">
+        <button class="drawer-tab-btn active" data-drawer-tab="news">News</button>
+        <button class="drawer-tab-btn" data-drawer-tab="announcements">Official NSE filings</button>
+        <button class="drawer-tab-btn" data-drawer-tab="fundamentals">Fundamentals</button>
+      </div>
+      <div id="drawerBody" class="drawer-body">
+        <div id="drawerNewsPanel">
+          <div id="drawerLoading" class="loading hidden">Fetching recent headlines…</div>
+          <div id="drawerError" class="error hidden"></div>
+          <ul id="drawerHeadlines" class="headline-list"></ul>
+        </div>
+        <div id="drawerAnnouncementsPanel" class="hidden">
+          <div id="announcementsLoading" class="loading hidden">Fetching official filings…</div>
+          <div id="announcementsError" class="error hidden"></div>
+          <ul id="announcementsList" class="headline-list"></ul>
+        </div>
+        <div id="drawerFundamentalsPanel" class="hidden">
+          <div id="fundamentalsBody" class="trade-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tradeModal" class="drawer hidden">
+    <div class="drawer-backdrop" id="tradeModalBackdrop"></div>
+    <div class="modal-panel">
+      <div class="drawer-header">
+        <h3 id="tradeModalTitle">Plan trade</h3>
+        <button id="tradeModalClose" class="btn btn-ghost">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="control-group">
+          <label for="tmEntry">Entry price (₹)</label>
+          <input type="number" id="tmEntry" step="0.05" />
+        </div>
+        <div class="control-group">
+          <label for="tmStop">Stop-loss price (₹)</label>
+          <input type="number" id="tmStop" step="0.05" />
+        </div>
+        <div class="control-group">
+          <label for="tmTarget">Target price (₹)</label>
+          <input type="number" id="tmTarget" step="0.05" />
+        </div>
+        <div class="control-group">
+          <label for="tmPortfolio">Portfolio size (₹)</label>
+          <input type="number" id="tmPortfolio" value="20000" step="500" />
+        </div>
+        <div class="control-group">
+          <label for="tmRisk">Max risk per trade (%)</label>
+          <input type="number" id="tmRisk" value="1" step="0.1" />
+        </div>
+        <div id="tmEarningsWarning" class="earnings-warning hidden"></div>
+        <div id="tmResult" class="trade-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

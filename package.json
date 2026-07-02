@@ -1,0 +1,16 @@
+{
+  "name": "nse-bse-killer-stock-screener",
+  "version": "1.0.0",
+  "description": "Self-serve NSE/BSE stock screener combining live technical scanning, news sentiment, ATR-based backtesting, multi-timeframe confirmation, and risk-managed position sizing.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dashboard": "node webapp/server.js",
+    "screen": "node scripts/nse_bse_market_screen.js",
+    "news": "node scripts/news_catalyst_scan.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
+}

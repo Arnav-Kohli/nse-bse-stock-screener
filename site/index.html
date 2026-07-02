@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NSE/BSE Killer Stock Screener — AI-Assisted Market Intelligence</title>
+<meta name="description" content="A self-serve trading intelligence dashboard combining live technical screening, news sentiment, backtested rules, and risk-managed position sizing for NSE & BSE equities." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <span class="nav-logo">NSE·BSE Screener</span>
+    <div class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#builder">Builder</a>
+      <a class="nav-cta" href="#cta">Get the code</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-content reveal">
+    <p class="eyebrow">A self-built market intelligence system</p>
+    <h1>Cut through market noise.<br/>Find the signal.</h1>
+    <p class="hero-sub">
+      Live NSE &amp; BSE technical screening, news sentiment, backtested rules, and risk-managed
+      position sizing — synthesized into one dashboard, refreshed on demand.
+    </p>
+    <div class="hero-ctas">
+      <a href="#cta" class="btn btn-primary">View the project</a>
+      <a href="#problem" class="btn btn-ghost">See how it works ↓</a>
+    </div>
+  </div>
+</header>
+
+<section id="problem" class="section video-section">
+  <div class="section-label reveal">01 — The Problem</div>
+  <h2 class="reveal">Thousands of tickers.<br/>One overwhelming wall of noise.</h2>
+  <p class="section-copy reveal">
+    Every candle, every ticker, every red-and-green number is screaming for attention at once.
+    Most retail traders either freeze, or chase whatever is loudest — not what's actually strongest.
+  </p>
+  <div class="video-frame reveal">
+    <video
+      class="section-video"
+      poster="assets/generated/section2-start-chaos-1280x720.png"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    >
+      <source src="assets/video/section2-chaos-to-clean-web.mp4" type="video/mp4" />
+    </video>
+    <div class="video-caption">Raw market noise, distilled down to a single clean read.</div>
+  </div>
+</section>
+
+<section id="how-it-works" class="section">
+  <div class="section-label reveal">02 — How It Works</div>
+  <h2 class="reveal">One dashboard. Five layers of filtering.</h2>
+  <div class="card-grid">
+    <div class="card reveal">
+      <div class="card-icon">◈</div>
+      <h3>Technical Screener</h3>
+      <p>Full-market NSE + BSE scan using RSI, EMA crossovers, relative volume, and price action — pulled live, not curated.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-icon">⟡</div>
+      <h3>News &amp; Sentiment</h3>
+      <p>Live headline scraping per symbol with heuristic positive/negative/neutral tagging, plus official NSE corporate announcements.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-icon">◇</div>
+      <h3>Multi-Timeframe Confirm</h3>
+      <p>Cross-checks daily signals against weekly and 4-hour structure before a setup counts as confirmed.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-icon">▦</div>
+      <h3>ATR-Based Backtesting</h3>
+      <p>Every rule is simulated bar-by-bar with real stop-loss and 2:1 target exits — not a fixed holding period fiction.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-icon">⌗</div>
+      <h3>Position Sizing &amp; Kite Tickets</h3>
+      <p>Enforces a fixed risk budget per trade and generates ready-to-place Zerodha Kite order tickets — never places orders itself.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-icon">◉</div>
+      <h3>Market Context</h3>
+      <p>India VIX and live FII/DII flow data contextualize every signal against the broader market regime.</p>
+    </div>
+  </div>
+</section>
+
+<section id="evidence" class="section evidence-section">
+  <div class="section-label reveal">03 — The Evidence</div>
+  <h2 class="reveal">Confidence is cheap.<br/>Backtested honesty isn't.</h2>
+  <p class="section-copy reveal">
+    Any chart can look convincing in hindsight. This system doesn't just flag a setup — it tells you,
+    from historical simulation, how often that exact rule actually hits its target, hits its stop, or
+    times out. If a rule doesn't hold up, the dashboard says so.
+  </p>
+  <div class="stat-row reveal">
+    <div class="stat">
+      <span class="stat-value">2:1</span>
+      <span class="stat-label">Minimum reward:risk enforced on every simulated exit</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">ATR</span>
+      <span class="stat-label">Dynamic stop-loss sizing, not arbitrary fixed percentages</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">1%</span>
+      <span class="stat-label">Max capital risked per trade, regardless of conviction</span>
+    </div>
+  </div>
+  <div class="video-frame reveal">
+    <video
+      class="section-video"
+      poster="assets/generated/evidence-start-confident-1280x720.png"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    >
+      <source src="assets/video/section3-evidence-web.mp4" type="video/mp4" />
+    </video>
+    <div class="video-caption">A confident-looking trend, wrapped in the analysis that decides if it's trustworthy.</div>
+  </div>
+</section>
+
+<section id="builder" class="section builder-section">
+  <div class="section-label reveal">04 — The Builder</div>
+  <div class="builder-grid reveal">
+    <div class="builder-portrait-placeholder">
+      <span>Portrait coming soon</span>
+    </div>
+    <div class="builder-copy">
+      <h2>Built end-to-end, alone.</h2>
+      <p>
+        From reverse-engineering a market data API with no public documentation, to building an ATR-based
+        backtest engine, to shipping a self-serve dashboard — every layer here was designed, built, and
+        stress-tested from scratch.
+      </p>
+      <p class="builder-note">Add a reference photo and I'll generate a matching portrait for this section.</p>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="section cta-section">
+  <div class="reveal">
+    <h2>Explore the project</h2>
+    <p class="section-copy">Live dashboard, full source, and technical writeup.</p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn-primary">View on GitHub</a>
+      <a href="#" class="btn btn-ghost">Open live dashboard</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>Built with TradingView MCP, Node.js, and a healthy distrust of "guaranteed" trading signals.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
