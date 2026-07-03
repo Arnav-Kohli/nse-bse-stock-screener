@@ -94,6 +94,26 @@ body {
   font-weight: 600 !important;
 }
 
+/* ---------- Cursor spotlight (mouse-follow) ---------- */
+.cursor-spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 640px;
+  height: 640px;
+  margin-left: -320px;
+  margin-top: -320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 209, 255, 0.14) 0%, rgba(167, 139, 250, 0.06) 45%, transparent 72%);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+.cursor-spotlight.is-active { opacity: 1; }
+
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
@@ -103,6 +123,79 @@ body {
   justify-content: center;
   padding: 120px 24px 80px;
   overflow: hidden;
+}
+
+/* ---------- Orbit visual (live rotating 3D + mouse tilt) ---------- */
+.orbit-visual {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 620px;
+  height: 620px;
+  transform: translate(-50%, -50%);
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.2s ease-out;
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(79, 209, 255, 0.22);
+  transform-style: preserve-3d;
+}
+
+.ring-1 { --rx: 78deg; animation: spinRing 16s linear infinite; }
+.ring-2 { --rx: 65deg; inset: 60px; border-color: rgba(167, 139, 250, 0.22); animation: spinRing 22s linear infinite reverse; }
+.ring-3 { --rx: 80deg; inset: 130px; border-color: rgba(79, 209, 255, 0.18); animation: spinRing 28s linear infinite; }
+
+@keyframes spinRing {
+  from { transform: rotateX(var(--rx)) rotateZ(0deg); }
+  to { transform: rotateX(var(--rx)) rotateZ(360deg); }
+}
+
+.orbit-dot {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px 3px rgba(79, 209, 255, 0.7);
+}
+
+.orbit-dot.dot-b {
+  top: auto;
+  bottom: -4px;
+  background: #a78bfa;
+  box-shadow: 0 0 12px 3px rgba(167, 139, 250, 0.6);
+}
+
+.orbit-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 30px 8px rgba(79, 209, 255, 0.5);
+}
+
+@media (max-width: 720px) {
+  .orbit-visual { width: 420px; height: 420px; }
+  .cursor-spotlight { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring { animation: none !important; }
+  .orbit-visual { transition: none !important; }
 }
 
 .hero-bg-glow {

@@ -230,6 +230,52 @@ const statObserver = new IntersectionObserver(
 );
 document.querySelectorAll(".stat-row").forEach((el) => statObserver.observe(el));
 
+/* ---------------- Cursor-follow spotlight + hero orbit tilt ---------------- */
+const cursorSpotlight = document.getElementById("cursorSpotlight");
+const orbitVisual = document.getElementById("orbitVisual");
+
+if (!reduceMotion && cursorSpotlight) {
+  let mouseTicking = false;
+  let lastX = window.innerWidth / 2;
+  let lastY = window.innerHeight / 2;
+
+  function applyMouseEffects() {
+    cursorSpotlight.style.transform = `translate(${lastX}px, ${lastY}px)`;
+
+    if (orbitVisual) {
+      const heroRect = hero.getBoundingClientRect();
+      if (heroRect.bottom > 0 && heroRect.top < window.innerHeight) {
+        const cx = heroRect.left + heroRect.width / 2;
+        const cy = heroRect.top + heroRect.height / 2;
+        const dx = (lastX - cx) / (heroRect.width / 2);
+        const dy = (lastY - cy) / (heroRect.height / 2);
+        const rotateY = Math.max(-1, Math.min(1, dx)) * 18;
+        const rotateX = Math.max(-1, Math.min(1, dy)) * -14;
+        orbitVisual.style.transform = `translate(-50%, -50%) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+      }
+    }
+    mouseTicking = false;
+  }
+
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+      cursorSpotlight.classList.add("is-active");
+      if (!mouseTicking) {
+        mouseTicking = true;
+        requestAnimationFrame(applyMouseEffects);
+      }
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("mouseleave", () => {
+    cursorSpotlight.classList.remove("is-active");
+  });
+}
+
 /* ---------------- Card tilt-on-hover ---------------- */
 if (!reduceMotion) {
   document.querySelectorAll(".card").forEach((card) => {
