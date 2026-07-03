@@ -5,8 +5,8 @@ live technical screening, news sentiment, ATR-based backtesting, multi-timeframe
 market context, and risk-managed position sizing — built as a personal project, zero external
 runtime dependencies.
 
-Live dashboard: `npm run dashboard` → http://localhost:4545
-Landing page: open `site/index.html`
+Live dashboard: `npm run dashboard` → http://localhost:4545 (or deploy to Render — see [DEPLOY.md](DEPLOY.md))
+Landing page: https://arnav-kohli.github.io/nse-bse-stock-screener/
 
 ## Why this exists
 
@@ -64,6 +64,14 @@ CLI-only usage:
 npm run screen -- --bias bullish --exchange NSE
 npm run news -- RELIANCE TCS INFY
 ```
+
+## Deploy for others (no clone required)
+
+To let visitors use the screener/backtester from a link (without running code locally), deploy the dashboard to **Render** (recommended) or Railway. Step-by-step: **[DEPLOY.md](DEPLOY.md)**.
+
+Quick version: connect this GitHub repo on [render.com](https://render.com) → **New → Blueprint** → it reads `render.yaml` → you get a URL like `https://nse-bse-screener.onrender.com`.
+
+**Vercel** is not a good fit here — free tier requests time out at 10 seconds, and full-market scans/backtests often take longer.
 
 ## Risk rules this project encodes
 

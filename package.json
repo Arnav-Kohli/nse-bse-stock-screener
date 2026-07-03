@@ -5,6 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "start": "node webapp/server.js",
     "dashboard": "node webapp/server.js",
     "screen": "node scripts/nse_bse_market_screen.js",
     "news": "node scripts/news_catalyst_scan.js"

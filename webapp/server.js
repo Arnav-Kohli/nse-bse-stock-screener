@@ -226,6 +226,7 @@ async function handleMarketContext(req, res) {
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
+  if (url.pathname === "/api/health") return sendJson(res, 200, { ok: true });
   if (url.pathname === "/api/screen") return handleScreen(req, res, url.searchParams);
   if (url.pathname === "/api/news") return handleNews(req, res, url.searchParams);
   if (url.pathname === "/api/announcements") return handleAnnouncements(req, res, url.searchParams);
