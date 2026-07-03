@@ -68,26 +68,29 @@
   </div>
 </header>
 
-<section id="problem" class="section section-heading">
-  <div class="section-label reveal">01 — The Problem</div>
-  <h2 class="reveal">Thousands of tickers.<br/>One overwhelming wall of noise.</h2>
-  <p class="section-copy reveal">
-    Every candle, every ticker, every red-and-green number is screaming for attention at once.
-    Most retail traders either freeze, or chase whatever is loudest — not what's actually strongest.
-    Scroll to watch it resolve.
-  </p>
+<section id="problem" class="section problem-section">
+  <div class="problem-grid">
+    <div class="problem-copy">
+      <div class="section-label reveal">01 — The Problem</div>
+      <h2 class="reveal">Thousands of tickers.<br/>One overwhelming wall of noise.</h2>
+      <p class="section-copy reveal">
+        Every candle, every ticker, every red-and-green number is screaming for attention at once.
+        Most retail traders either freeze, or chase whatever is loudest — not what's actually strongest.
+      </p>
+    </div>
+    <div class="float-figure reveal" data-parallax="0.05">
+      <img src="assets/objects/tickers.png" alt="Floating market ticker panels" class="float-object float-drift" loading="lazy" />
+    </div>
+  </div>
 </section>
 
-<div class="scrub-pin"
-     data-keyframes-dir="assets/keyframes/sphere"
-     data-keyframe-count="5">
-  <div class="scrub-sticky">
-    <canvas class="scrub-canvas"></canvas>
-    <div class="scrub-vignette"></div>
-    <div class="scrub-caption">Raw market noise, distilled down to a single clean signal.</div>
-    <div class="scrub-progress-track"><div class="scrub-progress-fill"></div></div>
+<section class="section showcase-section">
+  <div class="float-figure float-figure-center reveal" data-parallax="0.12">
+    <div class="object-glow object-glow-cyan"></div>
+    <img src="assets/objects/globe.png" alt="Rotating data sphere" class="float-object float-spin" id="globeObject" loading="lazy" />
   </div>
-</div>
+  <p class="showcase-caption reveal">Raw market noise, distilled into a single clean signal.</p>
+</section>
 
 <section id="how-it-works" class="section">
   <div class="section-label reveal">02 — How It Works</div>
@@ -126,40 +129,37 @@
   </div>
 </section>
 
-<section id="evidence" class="section section-heading">
-  <div class="section-label reveal">03 — The Evidence</div>
-  <h2 class="reveal">Confidence is cheap.<br/>Backtested honesty isn't.</h2>
-  <p class="section-copy reveal">
-    Any chart can look convincing in hindsight. This system doesn't just flag a setup — it tells you,
-    from historical simulation, how often that exact rule actually hits its target, hits its stop, or
-    times out. If a rule doesn't hold up, the dashboard says so.
-  </p>
-  <div class="stat-row reveal">
-    <div class="stat">
-      <span class="stat-value" data-count="2:1">0:0</span>
-      <span class="stat-label">Minimum reward:risk enforced on every simulated exit</span>
+<section id="evidence" class="section evidence-section">
+  <div class="evidence-grid">
+    <div class="evidence-copy">
+      <div class="section-label reveal">03 — The Evidence</div>
+      <h2 class="reveal">Confidence is cheap.<br/>Backtested honesty isn't.</h2>
+      <p class="section-copy reveal">
+        Any chart can look convincing in hindsight. This system doesn't just flag a setup — it tells you,
+        from historical simulation, how often that exact rule actually hits its target, hits its stop, or
+        times out. If a rule doesn't hold up, the dashboard says so.
+      </p>
+      <div class="stat-row reveal">
+        <div class="stat">
+          <span class="stat-value" data-count="2:1">0:0</span>
+          <span class="stat-label">Minimum reward:risk enforced on every simulated exit</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" data-scramble="ATR">ATR</span>
+          <span class="stat-label">Dynamic stop-loss sizing, not arbitrary fixed percentages</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" data-count="1%">0%</span>
+          <span class="stat-label">Max capital risked per trade, regardless of conviction</span>
+        </div>
+      </div>
     </div>
-    <div class="stat">
-      <span class="stat-value" data-scramble="ATR">ATR</span>
-      <span class="stat-label">Dynamic stop-loss sizing, not arbitrary fixed percentages</span>
-    </div>
-    <div class="stat">
-      <span class="stat-value" data-count="1%">0%</span>
-      <span class="stat-label">Max capital risked per trade, regardless of conviction</span>
+    <div class="float-figure reveal" data-parallax="0.08">
+      <div class="object-glow object-glow-green"></div>
+      <img src="assets/objects/candle.png" alt="Annotated candlestick" class="float-object float-drift-slow" loading="lazy" />
     </div>
   </div>
 </section>
-
-<div class="scrub-pin"
-     data-keyframes-dir="assets/keyframes/candle"
-     data-keyframe-count="5">
-  <div class="scrub-sticky">
-    <canvas class="scrub-canvas"></canvas>
-    <div class="scrub-vignette"></div>
-    <div class="scrub-caption">A confident-looking trend, wrapped in the analysis that decides if it's trustworthy.</div>
-    <div class="scrub-progress-track"><div class="scrub-progress-fill"></div></div>
-  </div>
-</div>
 
 <section id="cta" class="section cta-section">
   <div class="reveal">
