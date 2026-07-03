@@ -62,7 +62,14 @@ function updateHeroParallax() {
   }
 }
 
-/* ---------------- Scroll-scrubbed canvas video sequences ---------------- */
+/* ---------------- Scroll-scrubbed canvas sequences ----------------
+   Two modes, chosen by which data-* attributes are present:
+   - "frames": a dense frame-by-frame sequence extracted from a real video
+     (data-frames-dir, data-frame-count, data-frame-pad)
+   - "keyframes": a handful of AI-generated stills crossfaded + slowly
+     zoomed into each other as you scroll, used as a video-free fallback
+     (data-keyframes-dir, data-keyframe-count)
+------------------------------------------------------------------- */
 class ScrubSequence {
   constructor(pinEl) {
     this.pin = pinEl;
@@ -70,12 +77,22 @@ class ScrubSequence {
     this.canvas = pinEl.querySelector(".scrub-canvas");
     this.ctx = this.canvas.getContext("2d");
     this.progressFill = pinEl.querySelector(".scrub-progress-fill");
-    this.dir = pinEl.dataset.framesDir;
-    this.count = parseInt(pinEl.dataset.frameCount, 10);
-    this.pad = parseInt(pinEl.dataset.framePad, 10) || 3;
+
+    this.mode = pinEl.dataset.keyframesDir ? "keyframes" : "frames";
+    if (this.mode === "keyframes") {
+      this.dir = pinEl.dataset.keyframesDir;
+      this.count = parseInt(pinEl.dataset.keyframeCount, 10);
+      this.ext = pinEl.dataset.keyframeExt || "jpg";
+    } else {
+      this.dir = pinEl.dataset.framesDir;
+      this.count = parseInt(pinEl.dataset.frameCount, 10);
+      this.pad = parseInt(pinEl.dataset.framePad, 10) || 3;
+    }
+
     this.images = [];
     this.loaded = 0;
     this.lastDrawnIndex = -1;
+    this.lastProgress = 0;
     this.ready = false;
 
     this.resize = this.resize.bind(this);
@@ -87,6 +104,9 @@ class ScrubSequence {
   }
 
   frameUrl(i) {
+    if (this.mode === "keyframes") {
+      return `${this.dir}/kf${i + 1}.${this.ext}`;
+    }
     const n = String(i + 1).padStart(this.pad, "0");
     return `${this.dir}/frame_${n}.jpg`;
   }
@@ -97,7 +117,7 @@ class ScrubSequence {
       img.src = this.frameUrl(i);
       img.onload = () => {
         this.loaded++;
-        if (i === 0) this.drawFrame(0);
+        if (i === 0) this.draw(0);
         if (this.loaded === this.count) this.ready = true;
       };
       this.images[i] = img;
@@ -109,22 +129,48 @@ class ScrubSequence {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
-    if (this.lastDrawnIndex >= 0) this.drawFrame(this.lastDrawnIndex);
+    this.draw(this.lastProgress);
   }
 
-  drawFrame(index) {
-    const img = this.images[index];
-    if (!img || !img.complete || img.naturalWidth === 0) return;
+  drawImageCover(img, zoom) {
     const cw = this.canvas.width;
     const ch = this.canvas.height;
-    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight) * zoom;
     const dw = img.naturalWidth * scale;
     const dh = img.naturalHeight * scale;
     const dx = (cw - dw) / 2;
     const dy = (ch - dh) / 2;
-    this.ctx.clearRect(0, 0, cw, ch);
     this.ctx.drawImage(img, dx, dy, dw, dh);
-    this.lastDrawnIndex = index;
+  }
+
+  draw(progress) {
+    this.lastProgress = progress;
+
+    if (this.mode === "frames") {
+      const index = Math.round(progress * (this.count - 1));
+      const img = this.images[index];
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.drawImageCover(img, 1);
+      this.lastDrawnIndex = index;
+      return;
+    }
+
+    const scaled = progress * (this.count - 1);
+    const i0 = Math.max(0, Math.min(this.count - 2, Math.floor(scaled)));
+    const localT = scaled - i0;
+    const imgA = this.images[i0];
+    const imgB = this.images[i0 + 1];
+    if (!imgA || !imgA.complete || imgA.naturalWidth === 0) return;
+
+    const zoom = 1 + progress * 0.05;
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawImageCover(imgA, zoom);
+    if (imgB && imgB.complete && imgB.naturalWidth > 0 && localT > 0) {
+      this.ctx.globalAlpha = localT;
+      this.drawImageCover(imgB, zoom);
+      this.ctx.globalAlpha = 1;
+    }
   }
 
   render() {
@@ -133,10 +179,13 @@ class ScrubSequence {
     let progress = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0;
     progress = Math.max(0, Math.min(1, progress));
 
-    const frameIndex = Math.round(progress * (this.count - 1));
-    if (frameIndex !== this.lastDrawnIndex) {
-      this.drawFrame(frameIndex);
+    if (this.mode === "frames") {
+      const frameIndex = Math.round(progress * (this.count - 1));
+      if (frameIndex !== this.lastDrawnIndex) this.draw(progress);
+    } else {
+      this.draw(progress);
     }
+
     if (this.progressFill) {
       this.progressFill.style.width = progress * 100 + "%";
     }
