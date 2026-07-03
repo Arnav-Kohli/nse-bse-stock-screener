@@ -67,7 +67,7 @@ function updateHeroParallax() {
    the viewport (scroll depth) and leans slightly toward the cursor (mouse
    depth). The looping float/spin motion is pure CSS on the inner
    .float-object, so this outer transform never fights it. */
-const floatFigures = Array.from(document.querySelectorAll(".float-figure[data-parallax]")).map(
+const floatFigures = Array.from(document.querySelectorAll("[data-parallax]")).map(
   (el) => ({ el, factor: parseFloat(el.dataset.parallax) || 0 })
 );
 let normMouseX = 0;
@@ -101,6 +101,152 @@ function onScroll() {
 window.addEventListener("scroll", onScroll, { passive: true });
 window.addEventListener("resize", onScroll, { passive: true });
 onScroll();
+
+/* ---------------- Live 3D globe (canvas, no image, no dependency) ----------------
+   A real rotating sphere of glowing data points, drawn every frame at the
+   device's true resolution. It never pixelates when scaled, rotates as a
+   genuine 3D object (not a spinning flat image), keeps animating on its own
+   regardless of scroll, and leans toward the cursor. */
+class Globe3D {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.points = this.buildFibonacciSphere(760);
+    this.bars = this.buildBars(46);
+    this.angleY = 0;
+    this.angleX = -0.35;
+    this.tiltX = 0;
+    this.tiltY = 0;
+    this.running = true;
+
+    this.resize = this.resize.bind(this);
+    this.frame = this.frame.bind(this);
+    window.addEventListener("resize", this.resize);
+    this.resize();
+    requestAnimationFrame(this.frame);
+
+    // Pause when off-screen to save battery.
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { this.running = e.isIntersecting; }),
+      { threshold: 0 }
+    );
+    io.observe(canvas);
+  }
+
+  buildFibonacciSphere(n) {
+    const pts = [];
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < n; i++) {
+      const y = 1 - (i / (n - 1)) * 2;
+      const r = Math.sqrt(1 - y * y);
+      const theta = golden * i;
+      pts.push({ x: Math.cos(theta) * r, y, z: Math.sin(theta) * r });
+    }
+    return pts;
+  }
+
+  // A few points that get a brighter "data node" treatment.
+  buildBars(n) {
+    const bars = [];
+    for (let i = 0; i < n; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = 2 * Math.PI * u;
+      const phi = Math.acos(2 * v - 1);
+      bars.push({
+        x: Math.sin(phi) * Math.cos(theta),
+        y: Math.cos(phi),
+        z: Math.sin(phi) * Math.sin(theta),
+        h: 0.12 + Math.random() * 0.22,
+      });
+    }
+    return bars;
+  }
+
+  resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.canvas.width = Math.max(1, Math.round(rect.width * this.dpr));
+    this.canvas.height = Math.max(1, Math.round(rect.height * this.dpr));
+    this.cx = this.canvas.width / 2;
+    this.cy = this.canvas.height / 2;
+    this.radius = Math.min(this.canvas.width, this.canvas.height) * 0.4;
+  }
+
+  rotate(p, ay, ax) {
+    // rotate around Y
+    let x = p.x * Math.cos(ay) - p.z * Math.sin(ay);
+    let z = p.x * Math.sin(ay) + p.z * Math.cos(ay);
+    let y = p.y;
+    // rotate around X
+    const y2 = y * Math.cos(ax) - z * Math.sin(ax);
+    const z2 = y * Math.sin(ax) + z * Math.cos(ax);
+    return { x, y: y2, z: z2 };
+  }
+
+  frame() {
+    if (!this.running) {
+      requestAnimationFrame(this.frame);
+      return;
+    }
+    const speed = reduceMotion ? 0.0015 : 0.004;
+    this.angleY += speed;
+
+    // ease tilt toward mouse
+    const targetTiltY = normMouseX * 0.5;
+    const targetTiltX = -0.35 + normMouseY * 0.3;
+    this.tiltY += (targetTiltY - this.tiltY) * 0.05;
+    this.tiltX += (targetTiltX - this.tiltX) * 0.05;
+
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    const fov = 2.6;
+    const project = (r) => {
+      const scale = fov / (fov + r.z);
+      return {
+        px: this.cx + r.x * this.radius * scale + this.tiltY * this.radius * 0.15,
+        py: this.cy + r.y * this.radius * scale,
+        scale,
+        depth: (r.z + 1) / 2,
+      };
+    };
+
+    // points
+    for (const p of this.points) {
+      const r = this.rotate(p, this.angleY, this.tiltX);
+      const pr = project(r);
+      const alpha = 0.15 + pr.depth * 0.75;
+      const size = (0.6 + pr.depth * 1.6) * this.dpr;
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(120, 220, 255, ${alpha.toFixed(3)})`;
+      ctx.arc(pr.px, pr.py, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // brighter data nodes with a short radial "bar" glow
+    for (const b of this.bars) {
+      const r = this.rotate(b, this.angleY, this.tiltX);
+      const pr = project(r);
+      if (r.z < -0.1) continue; // only front-facing
+      const alpha = 0.3 + pr.depth * 0.7;
+      const size = (1.6 + pr.depth * 2.2) * this.dpr;
+      const grad = ctx.createRadialGradient(pr.px, pr.py, 0, pr.px, pr.py, size * 3);
+      grad.addColorStop(0, `rgba(180, 240, 255, ${alpha.toFixed(3)})`);
+      grad.addColorStop(1, "rgba(79, 209, 255, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(pr.px, pr.py, size * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(this.frame);
+  }
+}
+
+const globeCanvas = document.getElementById("globeCanvas");
+if (globeCanvas) new Globe3D(globeCanvas);
 
 /* ---------------- Stat count-up / scramble ---------------- */
 function animateCount(el, finalText, duration = 1100) {
